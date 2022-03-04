@@ -37,23 +37,34 @@ class NH(QtWidgets.QWidget, Base_Ui):
         super().setupUi(self)
 
         self.setWindowTitle("NH")
-        
+
         if INSTALLED:
             ico = QIcon("C:/Program Files/nh-dl/content/nh.png") if (
                     self.PLATFORM == "Windows" and os.path.isfile("C:/Program Files/nh-dl/content/nh.png")
                 ) else QIcon("~/nh-dl/content/nh.png") if (
                     (self.PLATFORM == 'Linux' or self.PLATFORM == 'Darwin') and os.path.isfile("~/nh-dl/content/nh.png")
                 ) else None
-            
+
         elif STANDALONE:
             ico = QIcon("content/nh.png")
-        
+
         self.setWindowIcon(ico) if (ico != None) else None
         del(ico)
 
+        # DL BUTTON is exitButton_2
         self.exitButton_2.clicked.connect(self.dl)
-        self.exitButton.clicked.connect(self.EXIT)
+        #self.exitButton.clicked.connect(self.EXIT)
         self.changeDirectory.clicked.connect(self.changeSaveDir)
+
+    def FRAMELESS(self) -> None:
+        # for the legacy transparent UI
+        self.setWindowFlags(
+                QtCore.Qt.WindowType(0x00000800)
+        )
+        self.setAttribute(
+                QtCore.Qt.WidgetAttribute(0x78) # (int: 120)
+                # QtCore.Qt.WidgetAttribute.WA_TranslucentBackground
+        )
 
     def initialize(self) -> None:
 
@@ -73,15 +84,15 @@ class NH(QtWidgets.QWidget, Base_Ui):
         # get path for executable for default
         self.EXE_PATH = __file__
         self.EXE_FOLDER = (
-            self.EXE_PATH.split("\\") if self.PLATFORM == 'Windows' else 
+            self.EXE_PATH.split("\\") if self.PLATFORM == 'Windows' else
             self.EXE_PATH.split('/') if self.PLATFORM == 'Linux' or self.PLATFORM == 'Darwin' else
             self.EXE_PATH.split('/')
         )
-        
+
         del(self.EXE_FOLDER[-1])
 
         tmp_path:str = ""
-        
+
         for i in self.EXE_FOLDER:
             tmp_path+= (i + "/")
 
@@ -112,32 +123,37 @@ class NH(QtWidgets.QWidget, Base_Ui):
             else:
                 print("ERROR: Config file not present")
 
-            
+
         elif STANDALONE:
             pass
-            
+
         return
 
     def EXIT(self) -> NoReturn:
         print("EXITING...")
         sys.exit()
 
+    def isInt(self, x) -> bool:
+        try:
+            type(int(x))
+        except ValueError:
+            return False
+        return True
+
     def dl(self) -> None:
-        # if the length of sauceBox is equal to 6, and all numbers are 
+        # if the length of sauceBox is equal to 6, and all numbers are
         # in between 0-9, then run the download
         sauceCode:str = self.sauceBox.text()
 
         if (
             len(sauceCode) == 0x6 and
-            type(int(sauceCode[0])) == int and
-            type(int(sauceCode[1])) == int and
-            type(int(sauceCode[2])) == int and
-            type(int(sauceCode[3])) == int and
-            type(int(sauceCode[4])) == int and
-            type(int(sauceCode[5])) == int and
-            #not False in [type(sauceCode[i])==int for i in range(0,6)] and
+            self.isInt(sauceCode[0]) and
+            self.isInt(sauceCode[1]) and
+            self.isInt(sauceCode[2]) and
+            self.isInt(sauceCode[3]) and
+            self.isInt(sauceCode[4]) and
+            self.isInt(sauceCode[5]) and
             not self.DOWNLOADING
-            # False not in [type(sauceCode[i])==int for i in range(0,6)]
         ):
             self.DOWNLOADING = True
 
@@ -148,7 +164,7 @@ class NH(QtWidgets.QWidget, Base_Ui):
             self.nh_instance.start()
             self.nh_instance.finished.connect(self.finishDL)
             self.nh_instance.progress_plus_txt_Signal.connect(self.progress_N_txt)
-            
+
 
         del(sauceCode)
 
@@ -172,7 +188,7 @@ class NH(QtWidgets.QWidget, Base_Ui):
     def changeSaveDir(self) -> None:
         print("Opening file dialog...")
         filePrompt = askdirectory(mustexist=True)
-        
+
         if filePrompt != '':
             print("Directory received.")
             self.saveToDirectory:str = str(filePrompt)
@@ -189,13 +205,6 @@ if __name__ == '__main__':
         nh_app = QtWidgets.QApplication([])
 
         nh_widget = NH()
-        nh_widget.setWindowFlags(
-                QtCore.Qt.WindowType(0x00000800)
-        )
-        nh_widget.setAttribute(
-                QtCore.Qt.WidgetAttribute(0x78) # (int: 120)
-                # QtCore.Qt.WidgetAttribute.WA_TranslucentBackground
-        )
         nh_widget.show()
 
         nh_widget.initialize()
