@@ -11,6 +11,11 @@ from PyQt6.QtGui import QIcon
 import nhentai
 import startup
 import cli
+from lang_db import (
+    SELECTED_LANG,
+    LANGS,
+    LANG_DB
+)
 
 import configparser
 import platform
@@ -101,7 +106,8 @@ class NH(QtWidgets.QWidget, Base_Ui):
 
         # default value
         self.saveToDirectory = (
-            "C:/Users/" + self.EXE_FOLDER.split('/')[2] + "/Downloads/" if self.PLATFORM == 'Windows' else
+            "C:/Users/" + self.EXE_FOLDER.split('/')[2] + "/Downloads/" if self.PLATFORM == 'Windows' and
+            os.path.isdir("C:/Users/" + self.EXE_FOLDER.split('/')[2] + "/Downloads/")  else
             "~/Downloads/" if self.PLATFORM == 'Linux' or self.PLATFORM == 'Darwin' else
             None
         )

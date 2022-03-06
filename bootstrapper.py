@@ -14,6 +14,17 @@ import PyInstaller.__main__
 import build_nh
 import build_ins
 
+subprocess.call(
+    [
+    sys.executable,
+    '-m',
+    'pip',
+    'install',
+    '-r',
+    'requirements.txt'
+    ]
+)
+
 cwd = os.getcwd()
 
 srcDIR = "./src/"
@@ -33,4 +44,3 @@ subprocess.call(
         'gen_data.py'
     ]
 )
-
