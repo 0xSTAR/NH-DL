@@ -42,6 +42,8 @@ You can also change this save directory by clicking "- CHANGE DIRECTORY -".
 
 ### CLI
 
+NOTE: The GUI executable can also be used as a command-line utility exactly as shown below
+
 Run the executable
 
 ```
