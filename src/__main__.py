@@ -146,19 +146,19 @@ class NH(QtWidgets.QWidget, Base_Ui):
             return False
         return True
 
+    def isOk(self,saucy:str) -> bool:
+        for i in saucy:
+            if not isInt(i):
+                return False
+        return True
+
     def dl(self) -> None:
-        # if the length of sauceBox is equal to 6, and all numbers are
+        # all numbers are
         # in between 0-9, then run the download
         sauceCode:str = self.sauceBox.text()
 
         if (
-            len(sauceCode) == 0x6 and
-            self.isInt(sauceCode[0]) and
-            self.isInt(sauceCode[1]) and
-            self.isInt(sauceCode[2]) and
-            self.isInt(sauceCode[3]) and
-            self.isInt(sauceCode[4]) and
-            self.isInt(sauceCode[5]) and
+            self.isOk(sauceCode) and
             not self.DOWNLOADING
         ):
             self.DOWNLOADING = True
@@ -185,11 +185,6 @@ class NH(QtWidgets.QWidget, Base_Ui):
     def progress_N_txt(self, x:int, y:str) -> None:
         self.progressionBar.setValue( x )
         self.labelStatus.setText( y )
-
-    def maybe(self) -> bool:
-        return (
-            math.ceil(random.random() * 3)
-        ) % 3 == 0
 
     def changeSaveDir(self) -> None:
         print("Opening file dialog...")
