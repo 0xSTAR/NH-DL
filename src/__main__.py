@@ -145,7 +145,7 @@ class NH(QtWidgets.QWidget, Base_Ui):
 
     def isOk(self,saucy:str) -> bool:
         for i in saucy:
-            if not isInt(i):
+            if not self.isInt(i):
                 return False
         return True
 
