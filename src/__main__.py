@@ -17,13 +17,10 @@ from lang_db import (
     LANG_DB
 )
 
-import configparser
 import platform
 from typing import NoReturn
 from tkinter import Tk
 from tkinter.filedialog import askdirectory
-import random
-import time
 
 INSTALLED = True if (
     sys.platform == 'win32' and os.path.isdir("C:/Program Files/nh-dl/")
@@ -182,8 +179,8 @@ class NH(QtWidgets.QWidget, Base_Ui):
 
         self.DOWNLOADING = False
 
-    def progress_N_txt(self, x:int, y:str) -> None:
-        self.progressionBar.setValue( x )
+    def progress_N_txt(self, x:float, y:str) -> None:
+        self.progressionBar.setValue( int(x) )
         self.labelStatus.setText( y )
 
     def changeSaveDir(self) -> None:

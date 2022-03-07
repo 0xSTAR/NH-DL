@@ -37,7 +37,7 @@ class Thread(threading.Thread):
 @dataclass
 class Progress:
     percent:float=0.0
-    increment:int=0
+    increment:float=0.0
     text:str="Idling..."
 
 @dataclass
@@ -65,18 +65,18 @@ def sift(session:Session, PROG_BAR:Progress, code:str) -> valid_page:
     for a in soupy.find_all('a'):
         href = a.get('href')
         if (
-            href != None and 
-            href.startswith(layer0_startswith) and 
+            href != None and
+            href.startswith(layer0_startswith) and
             not (SUPER_BASED_NHENTAI_LINK + href) in LAYER0_LINKS
         ):
             LAYER0_LINKS.append(SUPER_BASED_NHENTAI_LINK + href)
-        del(href) 
+        del(href)
     del(layer0_startswith)
 
     del(soupy)
 
     try:
-        PROG_BAR.increment:int = math.ceil( 100 / len(LAYER0_LINKS) )
+        PROG_BAR.increment:int = 100 / len(LAYER0_LINKS)
     except ZeroDivisionError:
         PROG_BAR.text:str = LANG_DB[SELECTED_LANG][8] + " 404"
         PROG_BAR.increment:int = 100
@@ -91,7 +91,7 @@ def sift(session:Session, PROG_BAR:Progress, code:str) -> valid_page:
             src = img.get('src')
             src_spl = src.split('.')
             if (
-                src != None and 
+                src != None and
                 src_spl[0].startswith("https://i") and
                 src_spl[1] == "nhentai" and
                 src_spl[2].startswith("net/galleries/") and
@@ -119,7 +119,7 @@ def download(session:Session, link:str, file_dest:str) -> None:
 
 
 class NHentai(QThread):
-    progress_plus_txt_Signal = pyqtSignal(int, str)
+    progress_plus_txt_Signal = pyqtSignal(float, str)
     def __init__(self, code:str, savedir:str, session:Session):
         super().__init__()
         self.__code:str = str(code)
@@ -156,7 +156,7 @@ class NHentai(QThread):
                 self.progressBar.percent
             )
 
-            self.progressBar.percent = math.floor(self.progressBar.percent)
+            #self.progressBar.percent = math.floor(self.progressBar.percent)
 
             self.progress_plus_txt_Signal.emit(
                 self.progressBar.percent,
