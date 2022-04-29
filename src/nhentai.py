@@ -95,7 +95,7 @@ def sift(session:Session, PROG_BAR:Progress, code:str) -> valid_page:
                 src_spl[0].startswith("https://i") and
                 src_spl[1] == "nhentai" and
                 src_spl[2].startswith("net/galleries/") and
-                src_spl[3] == "jpg"
+                src_spl[3] == "jpg" or src_spl[3] == "png" or src_spl[3] == "jpeg"
             ):
                 yield valid_page(
                     src,

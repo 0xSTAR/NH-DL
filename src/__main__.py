@@ -187,7 +187,7 @@ class NH(QtWidgets.QWidget, Base_Ui):
         print("Opening file dialog...")
         filePrompt = askdirectory(mustexist=True)
 
-        if filePrompt != '':
+        if filePrompt != '' and filePrompt != None and filePrompt != ():
             print("Directory received.")
             self.saveToDirectory:str = str(filePrompt)
             self.saveDirectory.setText("..." + self.saveToDirectory[-22:])
