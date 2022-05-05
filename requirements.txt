@@ -1,8 +1,11 @@
 altgraph==0.17.2
+anyio==3.5.0
 beautifulsoup4==4.10.0
 certifi==2021.10.8
-charset-normalizer==2.0.12
 future==0.18.2
+h11==0.12.0
+httpcore==0.14.7
+httpx==0.22.0
 idna==3.3
 pefile==2021.9.3
 pyinstaller==4.9
@@ -10,7 +13,6 @@ pyinstaller-hooks-contrib==2022.2
 PyQt6==6.2.3
 PyQt6-Qt6==6.2.3
 PyQt6-sip==13.2.1
-pywin32-ctypes==0.2.0
-requests==2.27.1
+sniffio==1.2.0
+rfc3986==1.5.0
 soupsieve==2.3.1
-urllib3==1.26.8

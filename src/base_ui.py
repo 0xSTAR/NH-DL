@@ -134,7 +134,7 @@ class Ui_Form(object):
 
 
         self.labelStatus = QtWidgets.QLabel(Form)
-        self.labelStatus.setGeometry(QtCore.QRect(40, 460, 211, 41))
+        self.labelStatus.setGeometry(QtCore.QRect(40, 460, 270, 41))
         font = QtGui.QFont()
         font.setPointSize(15)
         font.setBold(True)

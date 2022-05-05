@@ -10,7 +10,7 @@ from PyQt6.QtGui import QIcon
 
 import nhentai
 import startup
-import cli
+#import cli
 from lang_db import (
     SELECTED_LANG,
     LANGS,
@@ -21,16 +21,9 @@ import platform
 from typing import NoReturn
 from tkinter import Tk
 from tkinter.filedialog import askdirectory
+import configparser
 
-INSTALLED = True if (
-    sys.platform == 'win32' and os.path.isdir("C:/Program Files/nh-dl/")
-) else (
-    True
-) if (
-    (sys.platform == 'darwin' or sys.platform == 'linux') and os.path.isdir('~/nh-dl/')
-) else False
-
-STANDALONE = not INSTALLED
+STANDALONE = True
 
 class NH(QtWidgets.QWidget, Base_Ui):
     def __init__(self):
@@ -40,15 +33,7 @@ class NH(QtWidgets.QWidget, Base_Ui):
 
         self.setWindowTitle("NH")
 
-        if INSTALLED:
-            ico = QIcon("C:/Program Files/nh-dl/content/nh.png") if (
-                    self.PLATFORM == "Windows" and os.path.isfile("C:/Program Files/nh-dl/content/nh.png")
-                ) else QIcon("~/nh-dl/content/nh.png") if (
-                    (self.PLATFORM == 'Linux' or self.PLATFORM == 'Darwin') and os.path.isfile("~/nh-dl/content/nh.png")
-                ) else None
-
-        elif STANDALONE:
-            ico = QIcon("content/nh.png")
+        if STANDALONE: ico = QIcon("content/nh.png")
 
         self.setWindowIcon(ico) if (ico != None) else None
         del(ico)
@@ -81,7 +66,6 @@ class NH(QtWidgets.QWidget, Base_Ui):
 
         #self.PLATFORM = sys.platform
         self.PLATFORM = platform.system()
-        self.session = nhentai.Session()
 
         # get path for executable for default
         self.EXE_PATH = __file__
@@ -90,50 +74,47 @@ class NH(QtWidgets.QWidget, Base_Ui):
             self.EXE_PATH.split('/') if self.PLATFORM == 'Linux' or self.PLATFORM == 'Darwin' else
             self.EXE_PATH.split('/')
         )
-
         del(self.EXE_FOLDER[-1])
-
         tmp_path:str = ""
-
         for i in self.EXE_FOLDER:
             tmp_path+= (i + "/")
-
         self.EXE_FOLDER = tmp_path
         del(tmp_path)
 
-        # default value
-        self.saveToDirectory = (
-            "C:/Users/" + self.EXE_FOLDER.split('/')[2] + "/Downloads/" if self.PLATFORM == 'Windows' and
-            os.path.isdir("C:/Users/" + self.EXE_FOLDER.split('/')[2] + "/Downloads/")  else
-            "~/Downloads/" if self.PLATFORM == 'Linux' or self.PLATFORM == 'Darwin' else
-            None
-        )
+
+        # save directory & persistency
+        if STANDALONE and os.path.isfile(
+            nhentai.NH_ENUMS.CONFIG.value
+        ):
+            conf = configparser.ConfigParser()
+            conf.read(nhentai.NH_ENUMS.CONFIG.value)
+            self.saveToDirectory = conf["NH"]["SAVE_DIR"]
+            del conf
+        else:
+            # default value
+            self.saveToDirectory = (
+                "C:/Users/" + self.EXE_FOLDER.split('/')[2] + "/Downloads/" if self.PLATFORM == 'Windows' and
+                os.path.isdir("C:/Users/" + self.EXE_FOLDER.split('/')[2] + "/Downloads/")  else
+                "~/Downloads/" if self.PLATFORM == 'Linux' or self.PLATFORM == 'Darwin' else
+                None
+            )
 
         self.saveDirectory.setText("..." + self.saveToDirectory[-22:]) if self.saveToDirectory != None else (
             self.saveDirectory.setPlaceholderText('Select a Directory')
         )
 
-        # persistency (to be added in future)
-        if INSTALLED:
-            config_present = True if (
-                self.PLATFORM == 'Windows' and os.path.isfile("C:/Program Files/nh-dl/conf.ini")
-            ) else True if (
-                (self.PLATFORM == 'Linux' or self.PLATFORM == 'Darwin') and os.path.isfile("~/nh-dl/conf.ini")
-            ) else False
-
-            if config_present:
-                print("Config file present.")
-            else:
-                print("ERROR: Config file not present")
-
-
-        elif STANDALONE:
-            pass
-
         return
 
     def EXIT(self) -> NoReturn:
         print("EXITING...")
+
+        with open(nhentai.NH_ENUMS.CONFIG.value, "w") as conf_file:
+
+            conf = configparser.ConfigParser()
+            conf["NH"] = {}
+            conf["NH"]["SAVE_DIR"] = self.saveToDirectory
+            conf.write(conf_file)
+
         sys.exit()
 
     def isInt(self, x) -> bool:
@@ -161,7 +142,7 @@ class NH(QtWidgets.QWidget, Base_Ui):
             self.DOWNLOADING = True
 
             print("Instantiating extractor worker thread...")
-            self.nh_instance = nhentai.NHentai(sauceCode, self.saveToDirectory, self.session)
+            self.nh_instance = nhentai.NHentai(sauceCode, self.saveToDirectory)
 
             print("Beginning Download...")
             self.nh_instance.start()
@@ -208,8 +189,9 @@ if __name__ == '__main__':
         nh_widget.initialize()
 
         nh_app.exec()
+        nh_widget.EXIT()
 
-    else:
-        # CLI
-        nh_cli = cli.NH_CLI(str(sys.argv[1]))
-        nh_cli.run()
+    #else:
+    #    # CLI
+    #    nh_cli = cli.NH_CLI(str(sys.argv[1]))
+    #    nh_cli.run()
