@@ -5,24 +5,26 @@
 import sys
 import os
 from nhentai import (
-    Thread, 
-    Session,
-    Progress, 
-    sift, 
+    Thread,
+    Client,
+    Progress,
+    sift,
     download
 )
 import startup
+import asyncio
+from math import floor as flr
 
 class NHentai_Vanilla(object):
-    def __init__(self, code:str, savedir:str, session:Session):
+    def __init__(self, code:str, savedir:str):
+
         super().__init__()
         self.__code:str = str(code)
         self.__folder = "{}/{}/".format(
             str(savedir), self.__code
         )
-
-        self.session = session
         self.progressBar = Progress()
+        self.client = Client.create_client()
 
     def run(self) -> str:
         try:
@@ -30,18 +32,32 @@ class NHentai_Vanilla(object):
         except FileExistsError:
             pass
 
-        os.chdir(self.__folder)
+        asyncio.run(self.run_async())
 
-        for lnk in sift(self.session, self.progressBar, self.__code):
-            download(self.session, lnk.lnk, lnk.filename)
+    async def run_async(self):
+        print(f"\nFetching No. {self.__code}\n")
+        i = 1
+        async for lnk in sift(self.client, self.progressBar, self.__code):
+
+            x = await download(self.client, lnk.lnk, lnk.filename, self.__folder)
+
+            self.progressBar.percent += self.progressBar.increment
+            self.progressBar.percent = 100 if (self.progressBar.percent > 100) else (
+                    self.progressBar.percent
+                )
+
+            print(f"Downloading page #{i} [{flr(self.progressBar.percent)}%]")
+            i+=1
+
+        await self.client.aclose()
 
 
 class NH_CLI(object):
     def __init__(self, code:str):
         self.__code:str = str(code)
-        self.session = Session()
+        #self.session = Client.create_client()
         self.saveToDirectory = os.getcwd().replace("\\","/").replace("//","/")
-    
+
 
     def run(self):
         if (
@@ -51,10 +67,10 @@ class NH_CLI(object):
             type(int(self.__code[2])) == int and
             type(int(self.__code[3])) == int and
             type(int(self.__code[4])) == int and
-            type(int(self.__code[5])) == int 
+            type(int(self.__code[5])) == int
         ):
             print("Creating extractor instance...")
-            self.nh_instance = NHentai_Vanilla(self.__code, self.saveToDirectory, self.session)
+            self.nh_instance = NHentai_Vanilla(self.__code, self.saveToDirectory)#, self.session)
             print("Instantiating extractor worker thread...")
             self.nh_thread = Thread(target=self.nh_instance.run)
 
@@ -72,7 +88,7 @@ class NH_CLI(object):
             print("Extractor instance destroyed.")
 
 
-            print("\nFinished.\n")
+            print("\nFinished!\nThank you for using my service!\n")
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:

@@ -24,6 +24,9 @@ class NH_ENUMS(Enum):
     BASE_LNK = "https://nhentai.net/g/"
     SUPER_BASED_LNK = "https://nhentai.net"
 
+    NH_API = "https://nhentai.net/api/gallery/"
+    IMG_URL = "https://i.nhentai.net/galleries/"
+
     CONFIG = "nh.ini"
 
 class Client(httpx.AsyncClient):
@@ -66,83 +69,54 @@ class valid_page:
     lnk:str
     filename:str
 
-async def sift(PROG_BAR: Progress, code: str) -> valid_page:
-    BASE_NHENTAI_LINK = NH_ENUMS.BASE_LNK.value
-    SUPER_BASED_NHENTAI_LINK = NH_ENUMS.SUPER_BASED_LNK.value
+async def sift(_client: Client, PROG_BAR: Progress, code: str) -> valid_page:
+    """BASE_NHENTAI_LINK = NH_ENUMS.BASE_LNK.value
+    SUPER_BASED_NHENTAI_LINK = NH_ENUMS.SUPER_BASED_LNK.value"""
     PROG_BAR.text = LANG_DB[SELECTED_LANG][3]
 
-    async with Client.create_client() as _client:
+    api_lnk: str = NH_ENUMS.NH_API.value
+    img_lnk: str = NH_ENUMS.IMG_URL.value
 
-        r0 = await _client.get(BASE_NHENTAI_LINK+code)
-        soupy = BeautifulSoup(
-            r0.text,
-            'html.parser'
-        )
+    #_client = Client.create_client()
 
-        LAYER0_LINKS:list = []
+        # api scraper
 
-        # get the first layer of pages
-        layer0_startswith:str = "/g/{}/".format(
-            code
-        )
-        for a in soupy.find_all('a'):
-            href = a.get('href')
-            if (
-                href != None and
-                href.startswith(layer0_startswith) and
-                not (SUPER_BASED_NHENTAI_LINK + href) in LAYER0_LINKS
-            ):
-                LAYER0_LINKS.append(SUPER_BASED_NHENTAI_LINK + href)
-            del(href)
-        del(layer0_startswith)
+    r0 = await _client.get(api_lnk + code)
+    j0 = r0.json()
 
-        del(soupy)
+    EXTEND = {
+            "j":".JPG",
+            "p":".PNG",
+            "g":".GIF"
+    } # LOL, IT SPELLS OUT JPG
 
-        try:
-            PROG_BAR.increment:int = 100 / len(LAYER0_LINKS)
-        except ZeroDivisionError:
-            PROG_BAR.text:str = LANG_DB[SELECTED_LANG][8] + " 404"
-            PROG_BAR.increment:int = 100
+    dj_pages = j0["images"]["pages"]
+    try:
+        PROG_BAR.increment: int = 100 / len(dj_pages)
+    except ZeroDivisionError:
+        PROG_BAR.increment: int = 100
+        PROG_BAR.text = LANG_DB[SELECTED_LANG][8] + " 404"
 
-        # second layer and finally to then yield the pages
-        for l0_lnk in LAYER0_LINKS:
-            r1 = await _client.get(l0_lnk)
-            soupy2 = BeautifulSoup(
-                r1.text,
-                "html.parser"
+    TRUE_ID = str(int(j0["media_id"]))
+
+    for no, p in enumerate(dj_pages,start=1):
+        fn: str = "{}{}".format(str(no), EXTEND[p["t"]].lower() )
+        yield valid_page(
+                "{}{}/{}".format(img_lnk,TRUE_ID,fn),
+                fn
             )
-            for i,img in enumerate(soupy2.find_all('img'),start=1):
-                src = img.get('src')
-                src_spl = src.split('.')
-                if (
-                    src != None and
-                    src_spl[0].startswith("https://i") and
-                    src_spl[1] == "nhentai" and
-                    src_spl[2].startswith("net/galleries/") and
-                    src_spl[3] == "jpg" or src_spl[3] == "png" or src_spl[3] == "jpeg"
-                ):
-                    yield valid_page(
-                        src,
-                        src.split("/")[5]
-                    )
-                del(src)
-                del(src_spl)
 
-            del(soupy2)
+    #await _client.aclose()
 
-        del(LAYER0_LINKS)
-
-        del(BASE_NHENTAI_LINK)
-        del(SUPER_BASED_NHENTAI_LINK)
+    # bye bye frontend scraper !
 
 
 async def download(client: Client, link:str, file_dest:str, _folder) -> None:
-    print(_folder+file_dest)
-    async with client as c:
-        with open(_folder+file_dest,'wb') as dest:
-            async with c.stream("GET", link) as stream_obj:
-                async for chnk in stream_obj.aiter_bytes(chunk_size=4096):
-                    dest.write(chnk)
+    #print(_folder+file_dest)
+    with open(_folder+file_dest,'wb') as dest:
+        async with client.stream("GET", link) as stream_obj:
+            async for chnk in stream_obj.aiter_bytes(chunk_size=4096):
+                dest.write(chnk)
 
 
 class NHentai(QThread):
@@ -163,6 +137,26 @@ class NHentai(QThread):
             self.progressBar.text
         )
 
+    def detectCloudFlare(self) -> None:
+        self.progressBar.text = "CHECKING FOR CLOUDFLARE..."
+        self.ptEmit()
+        test = httpx.get(
+            NH_ENUMS.NH_API.value + self.__code
+        ).headers
+        try:
+            if test["server"] == "cloudflare":
+                self.progressBar.text = "CLOUDFLARE DETECTED"
+                self.ptEmit()
+                #await self.client.aclose()
+                #asyncio.run(self.client.aclose())
+                #return
+            else:
+                self.progressBar.text = "NO CLOUDFLARE DETECTED"
+        except:
+            pass
+
+        self.ptEmit()
+
     def run(self) -> str:
         try:
             os.mkdir(path=str(self.__folder), mode=511, dir_fd=None)
@@ -172,22 +166,7 @@ class NHentai(QThread):
         #os.chdir(self.__folder)
 
         ### TEST FOR CLOUDFLARE
-        self.progressBar.text = "CHECKING FOR CLOUDFLARE..."
-        self.ptEmit()
-        test = httpx.get(
-            NH_ENUMS.BASE_LNK.value + self.__code
-        ).headers
-        try:
-            if test["server"] == "cloudflare":
-                self.progressBar.text = "CLOUDFLARE DETECTED"
-                self.ptEmit()
-                #await self.client.aclose()
-                asyncio.run(self.client.aclose())
-                return
-        except:
-            pass
-        self.progressBar.text = "NO CLOUDFLARE DETECTED"
-        self.ptEmit()
+        #self.detectCloudFlare()
 
         ###
 
@@ -198,7 +177,7 @@ class NHentai(QThread):
         asyncio.run(self.run_async())
 
     async def run_async(self):
-        async for lnk in sift(self.progressBar, self.__code):
+        async for lnk in sift(self.client, self.progressBar, self.__code):
             self.progressBar.text = LANG_DB[SELECTED_LANG][4]
 
             x = await download(self.client, lnk.lnk, lnk.filename, self.__folder)

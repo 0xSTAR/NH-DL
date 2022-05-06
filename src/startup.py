@@ -1,4 +1,4 @@
-version:list = [1,0,1]
+version:list = [1,1,0]
 release_type:str = "dev"
 
 print(
