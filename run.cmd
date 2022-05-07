@@ -1,3 +1,3 @@
 cd src
-python __main__.py
+python -OO __main__.py
 cd ..

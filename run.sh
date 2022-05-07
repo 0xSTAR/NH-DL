@@ -1,5 +1,5 @@
 #!/usr/bin/sh
 
 cd src
-python3 __main__.py
+python3 -OO __main__.py
 cd ..

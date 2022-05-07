@@ -4,6 +4,7 @@ from lang_db import (
         LANGS,
         LANG_DB
 )
+#from copy import deepcopy
 
 
 class Ui_Form(object):
@@ -12,9 +13,16 @@ class Ui_Form(object):
         Form.setEnabled(True)
         Form.resize(440, 679)
 
+        ### UNIVERSAL APP FONT ###
+
+        QtGui.QFontDatabase.addApplicationFont("content/FiraCode-Bold.ttf")
+        UNIVERSAL_FONT = QtGui.QFont("Fira Code")
+
+        ##########################
+
         self.sauceBox = QtWidgets.QLineEdit(Form)
         self.sauceBox.setGeometry(QtCore.QRect(40, 239, 251, 41))
-        font = QtGui.QFont()
+        font = UNIVERSAL_FONT#QtGui.QFont()
         font.setPointSize(20)
         self.sauceBox.setFont(font)
         self.sauceBox.setStyleSheet("background: rgba(255, 255, 255,195);")
@@ -25,7 +33,7 @@ class Ui_Form(object):
 
         self.saveDirectory = QtWidgets.QLineEdit(Form)
         self.saveDirectory.setGeometry(QtCore.QRect(40, 350, 351, 41))
-        font = QtGui.QFont()
+        font = UNIVERSAL_FONT#deepcopy(UNIVERSAL_FONT)#QtGui.QFont()
         font.setPointSize(20)
         self.saveDirectory.setFont(font)
         self.saveDirectory.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.ArrowCursor))
@@ -41,7 +49,7 @@ class Ui_Form(object):
 
         self.labelSauce = QtWidgets.QLabel(Form)
         self.labelSauce.setGeometry(QtCore.QRect(40, 190, 200, 35))
-        font = QtGui.QFont()
+        font = UNIVERSAL_FONT#deepcopy(UNIVERSAL_FONT)#QtGui.QFont()
         font.setPointSize(15)
         font.setBold(True)
         font.setItalic(False)
@@ -57,7 +65,7 @@ class Ui_Form(object):
         self.saveDirLabel = QtWidgets.QLabel(Form)
         self.saveDirLabel.setGeometry(QtCore.QRect(40, 310, 200, 35))
 
-        font = QtGui.QFont()
+        font = UNIVERSAL_FONT#deepcopy(UNIVERSAL_FONT)#QtGui.QFont()
         font.setPointSize(15)
         font.setBold(True)
         font.setItalic(False)
@@ -82,8 +90,8 @@ class Ui_Form(object):
 
         self.exitButton_2 = QtWidgets.QPushButton(self.downloadFrame)
         self.exitButton_2.setGeometry(QtCore.QRect(0, 0, 81, 41))
-        font = QtGui.QFont()
-        font.setFamily("Sans Serif")
+        font = UNIVERSAL_FONT#deepcopy(UNIVERSAL_FONT)#QtGui.QFont()
+        #font.setFamily("Sans Serif")
         font.setPointSize(25)
         font.setBold(True)
         font.setWeight(75)
@@ -104,8 +112,8 @@ class Ui_Form(object):
         self.changeDirectoryFrame.setObjectName("changeDirectoryFrame")
         self.changeDirectory = QtWidgets.QPushButton(self.changeDirectoryFrame)
         self.changeDirectory.setGeometry(QtCore.QRect(0, 0, 351, 41))
-        font = QtGui.QFont()
-        font.setFamily("Sans Serif")
+        font = UNIVERSAL_FONT#deepcopy(UNIVERSAL_FONT)#QtGui.QFont()
+        #font.setFamily("Sans Serif")
         font.setPointSize(20)
         font.setBold(True)
         font.setWeight(75)
@@ -135,7 +143,7 @@ class Ui_Form(object):
 
         self.labelStatus = QtWidgets.QLabel(Form)
         self.labelStatus.setGeometry(QtCore.QRect(40, 460, 270, 41))
-        font = QtGui.QFont()
+        font = UNIVERSAL_FONT#deepcopy(UNIVERSAL_FONT)#QtGui.QFont()
         font.setPointSize(15)
         font.setBold(True)
         font.setWeight(75)

@@ -67,21 +67,6 @@ class NH(QtWidgets.QWidget, Base_Ui):
         #self.PLATFORM = sys.platform
         self.PLATFORM = platform.system()
 
-        # get path for executable for default
-        self.EXE_PATH = __file__
-        self.EXE_FOLDER = (
-            self.EXE_PATH.split("\\") if self.PLATFORM == 'Windows' else
-            self.EXE_PATH.split('/') if self.PLATFORM == 'Linux' or self.PLATFORM == 'Darwin' else
-            self.EXE_PATH.split('/')
-        )
-        del(self.EXE_FOLDER[-1])
-        tmp_path:str = ""
-        for i in self.EXE_FOLDER:
-            tmp_path+= (i + "/")
-        self.EXE_FOLDER = tmp_path
-        del(tmp_path)
-
-
         # save directory & persistency
         if STANDALONE and os.path.isfile(
             nhentai.NH_ENUMS.CONFIG.value
@@ -91,15 +76,9 @@ class NH(QtWidgets.QWidget, Base_Ui):
             self.saveToDirectory = conf["NH"]["SAVE_DIR"]
             del conf
         else:
-            # default value
-            self.saveToDirectory = (
-                "C:/Users/" + self.EXE_FOLDER.split('/')[2] + "/Downloads/" if self.PLATFORM == 'Windows' and
-                os.path.isdir("C:/Users/" + self.EXE_FOLDER.split('/')[2] + "/Downloads/")  else
-                "~/Downloads/" if self.PLATFORM == 'Linux' or self.PLATFORM == 'Darwin' else
-                None
-            )
+            self.saveToDirectory = os.getcwd()#.replace("\\","/")
 
-        self.saveDirectory.setText("..." + self.saveToDirectory[-22:]) if self.saveToDirectory != None else (
+        self.saveDirectory.setText("..." + self.saveToDirectory[-15:]) if self.saveToDirectory != None else (
             self.saveDirectory.setPlaceholderText('Select a Directory')
         )
 
@@ -171,7 +150,7 @@ class NH(QtWidgets.QWidget, Base_Ui):
         if filePrompt != '' and filePrompt != None and filePrompt != ():
             print("Directory received.")
             self.saveToDirectory:str = str(filePrompt)
-            self.saveDirectory.setText("..." + self.saveToDirectory[-22:])
+            self.saveDirectory.setText("..." + self.saveToDirectory[-15:])
         else:
             print("No directory received.")
 
@@ -184,9 +163,9 @@ if __name__ == '__main__':
         nh_app = QtWidgets.QApplication([])
 
         nh_widget = NH()
-        nh_widget.show()
 
         nh_widget.initialize()
+        nh_widget.show()
 
         nh_app.exec()
         nh_widget.EXIT()

@@ -10,9 +10,9 @@ themself to the possibility that they could potentially view adult (R18) content
 
 # CONTINUED...
 
-NH-DL is (preferably) a GUI, as well as a command-line downloading utility that offers 
+NH-DL is (preferably) a GUI, as well as a command-line downloading utility that offers
 the ability to download from the website NHentai without an account, and with relative ease
-by simply typing in the "sauce code" (a 6-digit code, uniquely identifying a work), and 
+by simply typing in the "sauce code" (a 6-digit code, uniquely identifying a work), and
 pressing the "DL" (Download) button.
 
 # CURRENT STATUS AND GETTING NH-DL
@@ -22,6 +22,4 @@ You can get NH-DL from the Releases tab.
 
 # MORE...
 
-SOON!
-
-
+MORE SOON!

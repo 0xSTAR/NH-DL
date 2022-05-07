@@ -1,5 +1,5 @@
 # change when building to switch the app to another language
-SELECTED_LANG = "en"
+SELECTED_LANG = "jp"
 
 LANGS:list = [
     "en", # english
