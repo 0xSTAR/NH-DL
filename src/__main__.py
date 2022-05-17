@@ -96,16 +96,18 @@ class NH(QtWidgets.QWidget, Base_Ui):
 
         sys.exit()
 
-    def isInt(self, x) -> bool:
+    @staticmethod
+    def isInt(x) -> bool:
         try:
             type(int(x))
         except ValueError:
             return False
         return True
 
-    def isOk(self,saucy:str) -> bool:
+    @staticmethod
+    def isOk(saucy:str) -> bool:
         for i in saucy:
-            if not self.isInt(i):
+            if not NH.isInt(i):
                 return False
         return True
 
@@ -115,7 +117,7 @@ class NH(QtWidgets.QWidget, Base_Ui):
         sauceCode:str = self.sauceBox.text()
 
         if (
-            self.isOk(sauceCode) and
+            NH.isOk(sauceCode) and
             not self.DOWNLOADING
         ):
             self.DOWNLOADING = True

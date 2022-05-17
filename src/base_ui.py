@@ -4,6 +4,9 @@ from lang_db import (
         LANGS,
         LANG_DB
 )
+
+import random
+from math import floor  as flr
 #from copy import deepcopy
 
 
@@ -13,10 +16,14 @@ class Ui_Form(object):
         Form.setEnabled(True)
         Form.resize(440, 679)
 
-        ### UNIVERSAL APP FONT ###
+        ### UNIVERSAL APP FONT & BG ###
 
         QtGui.QFontDatabase.addApplicationFont("content/FiraCode-Bold.ttf")
         UNIVERSAL_FONT = QtGui.QFont("Fira Code")
+
+        APP_BG = "content/bg{}.png".format(
+            str(random.randrange(0,9))
+        )
 
         ##########################
 
@@ -158,7 +165,7 @@ class Ui_Form(object):
         self.BG = QtWidgets.QLabel(Form)
         self.BG.setGeometry(QtCore.QRect(0, 0, 440, 679))
         self.BG.setText("")
-        self.BG.setPixmap(QtGui.QPixmap("content/bg0.png"))
+        self.BG.setPixmap(QtGui.QPixmap(APP_BG))
         self.BG.setScaledContents(False)
         self.BG.setObjectName("BG")
 
