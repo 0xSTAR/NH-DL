@@ -17,8 +17,7 @@ pressing the "DL" (Download) button.
 
 # CURRENT STATUS AND GETTING NH-DL
 
-NH-DL is currently on version 1.0.1 -- with 1.1.0 coming shortly with some IMPORTANT new features and fixes.
-You can get NH-DL from the Releases tab.
+You can get the latest version of NH-DL from the "Releases" tab. The current latest version is 1.1.0
 
 # MORE...
 

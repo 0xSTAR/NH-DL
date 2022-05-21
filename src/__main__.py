@@ -73,7 +73,10 @@ class NH(QtWidgets.QWidget, Base_Ui):
         ):
             conf = configparser.ConfigParser()
             conf.read(nhentai.NH_ENUMS.CONFIG.value)
-            self.saveToDirectory = conf["NH"]["SAVE_DIR"]
+            try:
+                self.saveToDirectory = conf["NH"]["SAVE_DIR"]
+            except:
+                self.saveToDirectory = os.getcwd()
             del conf
         else:
             self.saveToDirectory = os.getcwd()#.replace("\\","/")
@@ -92,20 +95,17 @@ class NH(QtWidgets.QWidget, Base_Ui):
             conf = configparser.ConfigParser()
             conf["NH"] = {}
             conf["NH"]["SAVE_DIR"] = self.saveToDirectory
+            conf["NH"]["LANGUAGE"] = SELECTED_LANG
             conf.write(conf_file)
 
         sys.exit()
 
     @staticmethod
-    def isInt(x) -> bool:
-        try:
-            type(int(x))
-        except ValueError:
-            return False
-        return True
+    def isInt(x: str) -> bool:
+        return x.isdigit()
 
     @staticmethod
-    def isOk(saucy:str) -> bool:
+    def isOk(saucy: str) -> bool:
         for i in saucy:
             if not NH.isInt(i):
                 return False

@@ -5,11 +5,7 @@ import asyncio
 import threading
 from bs4 import BeautifulSoup
 from dataclasses import dataclass
-from enum import (
-    Enum,
-    unique,
-    auto
-)
+import json
 
 from lang_db import (
     SELECTED_LANG,
@@ -19,15 +15,7 @@ from lang_db import (
 
 from PyQt6.QtCore import QThread, pyqtSignal
 
-@unique
-class NH_ENUMS(Enum):
-    BASE_LNK = "https://nhentai.net/g/"
-    SUPER_BASED_LNK = "https://nhentai.net"
-
-    NH_API = "https://nhentai.net/api/gallery/"
-    IMG_URL = "https://i.nhentai.net/galleries/"
-
-    CONFIG = "nh.ini"
+from nh_enums import NH_ENUMS
 
 class Client(httpx.AsyncClient):
     def __init__(self,*args,**kwargs):
@@ -40,10 +28,10 @@ class Client(httpx.AsyncClient):
         #    }
         #)
 
-    @staticmethod
-    def create_client() -> object:
+    @classmethod
+    def create_client(cls) -> object:
         headers = {"user-agent":"Mozilla/5.0 (X11; Linux i686; rv:10.0) Gecko/20100101 Firefox/10.0"}
-        client = Client(
+        client = cls(
             headers=headers
         )
         return client
@@ -70,19 +58,16 @@ class valid_page:
     filename:str
 
 async def sift(_client: Client, PROG_BAR: Progress, code: str) -> valid_page:
-    """BASE_NHENTAI_LINK = NH_ENUMS.BASE_LNK.value
-    SUPER_BASED_NHENTAI_LINK = NH_ENUMS.SUPER_BASED_LNK.value"""
     PROG_BAR.text = LANG_DB[SELECTED_LANG][3]
 
     api_lnk: str = NH_ENUMS.NH_API.value
     img_lnk: str = NH_ENUMS.IMG_URL.value
 
-    #_client = Client.create_client()
-
         # api scraper
 
     r0 = await _client.get(api_lnk + code)
     j0 = r0.json()
+
 
     EXTEND = {
             "j":".JPG",
@@ -106,13 +91,10 @@ async def sift(_client: Client, PROG_BAR: Progress, code: str) -> valid_page:
                 fn
             )
 
-    #await _client.aclose()
-
     # bye bye frontend scraper !
 
 
 async def download(client: Client, link:str, file_dest:str, _folder) -> None:
-    #print(_folder+file_dest)
     with open(_folder+file_dest,'wb') as dest:
         async with client.stream("GET", link) as stream_obj:
             async for chnk in stream_obj.aiter_bytes(chunk_size=4096):
@@ -147,9 +129,6 @@ class NHentai(QThread):
             if test["server"] == "cloudflare":
                 self.progressBar.text = "CLOUDFLARE DETECTED"
                 self.ptEmit()
-                #await self.client.aclose()
-                #asyncio.run(self.client.aclose())
-                #return
             else:
                 self.progressBar.text = "NO CLOUDFLARE DETECTED"
         except:
@@ -177,29 +156,41 @@ class NHentai(QThread):
         asyncio.run(self.run_async())
 
     async def run_async(self):
-        async for lnk in sift(self.client, self.progressBar, self.__code):
-            self.progressBar.text = LANG_DB[SELECTED_LANG][4]
+        # RUN TEST #
 
-            x = await download(self.client, lnk.lnk, lnk.filename, self.__folder)
+        CLOUDFLARE_DETECTED: bool = False
 
-            self.progressBar.percent += self.progressBar.increment
-            self.progressBar.percent = 100 if (self.progressBar.percent > 100) else (
-                    self.progressBar.percent
-                )
+        r0 = await self.client.get(NH_ENUMS.NH_API.value + self.__code)
+        j0 = None
+        try:
+            j0 = r0.json()
+        except json.decoder.JSONDecodeError:
+            CLOUDFLARE_DETECTED = not CLOUDFLARE_DETECTED
+            self.progressBar.text = "Error: IUAM Detected"
+            self.progressBar.percent = 0
 
-                #self.progressBar.percent = math.floor(self.progressBar.percent)
-            self.progress_plus_txt_Signal.emit(
-                    self.progressBar.percent,
-                    self.progressBar.text
-                )
+        del r0
+        del j0
+
+        ###############
+
+        if not CLOUDFLARE_DETECTED:
+            async for lnk in sift(self.client, self.progressBar, self.__code):
+                self.progressBar.text = LANG_DB[SELECTED_LANG][4]
+
+                x = await download(self.client, lnk.lnk, lnk.filename, self.__folder)
+
+                self.progressBar.percent += self.progressBar.increment
+                self.progressBar.percent = 100 if (self.progressBar.percent > 100) else (
+                        self.progressBar.percent
+                    )
+
+                self.ptEmit()
 
 
-        self.progressBar.text = LANG_DB[SELECTED_LANG][5]
-        self.progressBar.percent = 100
+            self.progressBar.text = LANG_DB[SELECTED_LANG][5]
+            self.progressBar.percent = 100
 
-        self.progress_plus_txt_Signal.emit(
-            self.progressBar.percent,
-            self.progressBar.text
-        )
+        self.ptEmit()
 
         await self.client.aclose()

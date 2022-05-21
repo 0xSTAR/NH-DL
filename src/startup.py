@@ -1,4 +1,4 @@
-version:list = [1,1,0]
+version:list = [1,1,1]
 release_type:str = "dev"
 
 print(
@@ -9,10 +9,3 @@ print(
         release_type
     )
 )
-
-artist = {
-    "At":"@",
-    "Platform":""
-}
-
-artist_mention:str = "Artwork by {} on {}".format(artist["At"],artist["Platform"])
