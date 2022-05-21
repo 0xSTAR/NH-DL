@@ -1,13 +1,10 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
-from lang_db import (
-        SELECTED_LANG,
-        LANGS,
-        LANG_DB
-)
+from lang_db import SELECTED_LANG, LANGS, LANG_DB
 
 import random
-from math import floor  as flr
-#from copy import deepcopy
+from math import floor as flr
+
+# from copy import deepcopy
 
 
 class Ui_Form(object):
@@ -21,15 +18,13 @@ class Ui_Form(object):
         QtGui.QFontDatabase.addApplicationFont("content/FiraCode-Bold.ttf")
         UNIVERSAL_FONT = QtGui.QFont("Fira Code")
 
-        APP_BG = "content/bg{}.png".format(
-            str(random.randrange(0,9))
-        )
+        APP_BG = "content/bg{}.png".format(str(random.randrange(0, 9)))
 
         ##########################
 
         self.sauceBox = QtWidgets.QLineEdit(Form)
         self.sauceBox.setGeometry(QtCore.QRect(40, 239, 251, 41))
-        font = UNIVERSAL_FONT#QtGui.QFont()
+        font = UNIVERSAL_FONT  # QtGui.QFont()
         font.setPointSize(20)
         self.sauceBox.setFont(font)
         self.sauceBox.setStyleSheet("background: rgba(255, 255, 255,195);")
@@ -40,7 +35,7 @@ class Ui_Form(object):
 
         self.saveDirectory = QtWidgets.QLineEdit(Form)
         self.saveDirectory.setGeometry(QtCore.QRect(40, 350, 351, 41))
-        font = UNIVERSAL_FONT#deepcopy(UNIVERSAL_FONT)#QtGui.QFont()
+        font = UNIVERSAL_FONT  # deepcopy(UNIVERSAL_FONT)#QtGui.QFont()
         font.setPointSize(20)
         self.saveDirectory.setFont(font)
         self.saveDirectory.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.ArrowCursor))
@@ -56,7 +51,7 @@ class Ui_Form(object):
 
         self.labelSauce = QtWidgets.QLabel(Form)
         self.labelSauce.setGeometry(QtCore.QRect(40, 190, 200, 35))
-        font = UNIVERSAL_FONT#deepcopy(UNIVERSAL_FONT)#QtGui.QFont()
+        font = UNIVERSAL_FONT  # deepcopy(UNIVERSAL_FONT)#QtGui.QFont()
         font.setPointSize(15)
         font.setBold(True)
         font.setItalic(False)
@@ -67,12 +62,16 @@ class Ui_Form(object):
         self.labelSauce.setAutoFillBackground(False)
         self.labelSauce.setStyleSheet("color: rgb(255, 255, 255);")
         self.labelSauce.setLineWidth(0)
-        self.labelSauce.setAlignment(QtCore.Qt.AlignmentFlag.AlignBottom|QtCore.Qt.AlignmentFlag.AlignLeading|QtCore.Qt.AlignmentFlag.AlignLeft)
+        self.labelSauce.setAlignment(
+            QtCore.Qt.AlignmentFlag.AlignBottom
+            | QtCore.Qt.AlignmentFlag.AlignLeading
+            | QtCore.Qt.AlignmentFlag.AlignLeft
+        )
         self.labelSauce.setObjectName("labelSauce")
         self.saveDirLabel = QtWidgets.QLabel(Form)
         self.saveDirLabel.setGeometry(QtCore.QRect(40, 310, 200, 35))
 
-        font = UNIVERSAL_FONT#deepcopy(UNIVERSAL_FONT)#QtGui.QFont()
+        font = UNIVERSAL_FONT  # deepcopy(UNIVERSAL_FONT)#QtGui.QFont()
         font.setPointSize(15)
         font.setBold(True)
         font.setItalic(False)
@@ -83,74 +82,84 @@ class Ui_Form(object):
         self.saveDirLabel.setAutoFillBackground(False)
         self.saveDirLabel.setStyleSheet("color: rgb(255, 255, 255);")
         self.saveDirLabel.setLineWidth(0)
-        self.saveDirLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignBottom|QtCore.Qt.AlignmentFlag.AlignLeading|QtCore.Qt.AlignmentFlag.AlignLeft)
+        self.saveDirLabel.setAlignment(
+            QtCore.Qt.AlignmentFlag.AlignBottom
+            | QtCore.Qt.AlignmentFlag.AlignLeading
+            | QtCore.Qt.AlignmentFlag.AlignLeft
+        )
         self.saveDirLabel.setObjectName("saveDirLabel")
 
         self.downloadFrame = QtWidgets.QFrame(Form)
         self.downloadFrame.setGeometry(QtCore.QRect(310, 240, 81, 41))
-        self.downloadFrame.setStyleSheet("border-width: 10px;\n"
-"border-radius: 50px; \n"
-"")
+        self.downloadFrame.setStyleSheet(
+            "border-width: 10px;\n" "border-radius: 50px; \n" ""
+        )
         self.downloadFrame.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
         self.downloadFrame.setFrameShadow(QtWidgets.QFrame.Shadow.Raised)
         self.downloadFrame.setObjectName("downloadFrame")
 
         self.exitButton_2 = QtWidgets.QPushButton(self.downloadFrame)
         self.exitButton_2.setGeometry(QtCore.QRect(0, 0, 81, 41))
-        font = UNIVERSAL_FONT#deepcopy(UNIVERSAL_FONT)#QtGui.QFont()
-        #font.setFamily("Sans Serif")
+        font = UNIVERSAL_FONT  # deepcopy(UNIVERSAL_FONT)#QtGui.QFont()
+        # font.setFamily("Sans Serif")
         font.setPointSize(25)
         font.setBold(True)
         font.setWeight(75)
         font.setStyleStrategy(QtGui.QFont.StyleStrategy.PreferAntialias)
         self.exitButton_2.setFont(font)
         self.exitButton_2.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.OpenHandCursor))
-        self.exitButton_2.setStyleSheet("background: rgb(236,40,84); \n"
-"color: rgb(255,255,255);")
+        self.exitButton_2.setStyleSheet(
+            "background: rgb(236,40,84); \n" "color: rgb(255,255,255);"
+        )
         self.exitButton_2.setObjectName("exitButton_2")
 
         self.changeDirectoryFrame = QtWidgets.QFrame(Form)
         self.changeDirectoryFrame.setGeometry(QtCore.QRect(40, 400, 351, 41))
-        self.changeDirectoryFrame.setStyleSheet("border-width: 10px;\n"
-"border-radius: 50px; \n"
-"")
+        self.changeDirectoryFrame.setStyleSheet(
+            "border-width: 10px;\n" "border-radius: 50px; \n" ""
+        )
         self.changeDirectoryFrame.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
         self.changeDirectoryFrame.setFrameShadow(QtWidgets.QFrame.Shadow.Raised)
         self.changeDirectoryFrame.setObjectName("changeDirectoryFrame")
         self.changeDirectory = QtWidgets.QPushButton(self.changeDirectoryFrame)
         self.changeDirectory.setGeometry(QtCore.QRect(0, 0, 351, 41))
-        font = UNIVERSAL_FONT#deepcopy(UNIVERSAL_FONT)#QtGui.QFont()
-        #font.setFamily("Sans Serif")
+        font = UNIVERSAL_FONT  # deepcopy(UNIVERSAL_FONT)#QtGui.QFont()
+        # font.setFamily("Sans Serif")
         font.setPointSize(20)
         font.setBold(True)
         font.setWeight(75)
         font.setStyleStrategy(QtGui.QFont.StyleStrategy.PreferAntialias)
         self.changeDirectory.setFont(font)
-        self.changeDirectory.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.OpenHandCursor))
-        self.changeDirectory.setStyleSheet("background: rgb(236,40,84); \n"
-"color: rgb(255,255,255);")
+        self.changeDirectory.setCursor(
+            QtGui.QCursor(QtCore.Qt.CursorShape.OpenHandCursor)
+        )
+        self.changeDirectory.setStyleSheet(
+            "background: rgb(236,40,84); \n" "color: rgb(255,255,255);"
+        )
         self.changeDirectory.setObjectName("changeDirectory")
-
 
         self.progressionBar = QtWidgets.QProgressBar(Form)
         self.progressionBar.setGeometry(QtCore.QRect(40, 510, 351, 81))
         self.progressionBar.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)
-        self.progressionBar.setStyleSheet("QProgressBar::chunk {\n"
-"    background-color: rgb(236,40,84); \n"
-"    color:rgba(220,220,210,190)\n"
-"};\n"
-"")
+        self.progressionBar.setStyleSheet(
+            "QProgressBar::chunk {\n"
+            "    background-color: rgb(236,40,84); \n"
+            "    color:rgba(220,220,210,190)\n"
+            "};\n"
+            ""
+        )
         self.progressionBar.setProperty("value", 0)
         self.progressionBar.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.progressionBar.setOrientation(QtCore.Qt.Orientation.Vertical)
         self.progressionBar.setInvertedAppearance(False)
-        self.progressionBar.setTextDirection(QtWidgets.QProgressBar.Direction.TopToBottom)
+        self.progressionBar.setTextDirection(
+            QtWidgets.QProgressBar.Direction.TopToBottom
+        )
         self.progressionBar.setObjectName("progressionBar")
-
 
         self.labelStatus = QtWidgets.QLabel(Form)
         self.labelStatus.setGeometry(QtCore.QRect(40, 460, 270, 41))
-        font = UNIVERSAL_FONT#deepcopy(UNIVERSAL_FONT)#QtGui.QFont()
+        font = UNIVERSAL_FONT  # deepcopy(UNIVERSAL_FONT)#QtGui.QFont()
         font.setPointSize(15)
         font.setBold(True)
         font.setWeight(75)
@@ -158,9 +167,12 @@ class Ui_Form(object):
         self.labelStatus.setFont(font)
         self.labelStatus.setStyleSheet("color: rgb(255, 255, 255);")
         self.labelStatus.setTextFormat(QtCore.Qt.TextFormat.AutoText)
-        self.labelStatus.setAlignment(QtCore.Qt.AlignmentFlag.AlignBottom|QtCore.Qt.AlignmentFlag.AlignLeading|QtCore.Qt.AlignmentFlag.AlignLeft)
+        self.labelStatus.setAlignment(
+            QtCore.Qt.AlignmentFlag.AlignBottom
+            | QtCore.Qt.AlignmentFlag.AlignLeading
+            | QtCore.Qt.AlignmentFlag.AlignLeft
+        )
         self.labelStatus.setObjectName("labelStatus")
-
 
         self.BG = QtWidgets.QLabel(Form)
         self.BG.setGeometry(QtCore.QRect(0, 0, 440, 679))
@@ -169,13 +181,11 @@ class Ui_Form(object):
         self.BG.setScaledContents(False)
         self.BG.setObjectName("BG")
 
-
         self.LOGO = QtWidgets.QLabel(Form)
         self.LOGO.setGeometry(QtCore.QRect(40, 20, 364, 160))
         self.LOGO.setText("")
         self.LOGO.setPixmap(QtGui.QPixmap("content/nh0.png"))
         self.LOGO.setObjectName("LOGO")
-
 
         self.BG.raise_()
         self.sauceBox.raise_()
@@ -207,6 +217,7 @@ class Ui_Form(object):
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     Form = QtWidgets.QWidget()
     ui = Ui_Form()

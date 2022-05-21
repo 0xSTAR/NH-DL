@@ -7,34 +7,25 @@ from bs4 import BeautifulSoup
 from dataclasses import dataclass
 import json
 
-from lang_db import (
-    SELECTED_LANG,
-    LANGS,
-    LANG_DB
-)
+from lang_db import SELECTED_LANG, LANGS, LANG_DB
 
 from PyQt6.QtCore import QThread, pyqtSignal
 
 from nh_enums import NH_ENUMS
 
-class Client(httpx.AsyncClient):
-    def __init__(self,*args,**kwargs):
-        super().__init__(*args,**kwargs)
 
-        #self.headers.update(
-        #    {
-        #        "User-Agent":"Mozilla/5.0 (X11; Linux i686; rv:10.0) Gecko/20100101 Firefox/10.0",
-        #        "Connection":"Keep-Alive"
-        #    }
-        #)
+class Client(httpx.AsyncClient):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     @classmethod
     def create_client(cls) -> object:
-        headers = {"user-agent":"Mozilla/5.0 (X11; Linux i686; rv:10.0) Gecko/20100101 Firefox/10.0"}
-        client = cls(
-            headers=headers
-        )
+        headers = {
+            "user-agent": "Mozilla/5.0 (X11; Linux i686; rv:10.0) Gecko/20100101 Firefox/10.0"
+        }
+        client = cls(headers=headers)
         return client
+
 
 class Thread(threading.Thread):
     def __init__(self, *args, **kwargs):
@@ -46,16 +37,19 @@ class Thread(threading.Thread):
     def __join(self):
         self.join()
 
+
 @dataclass
 class Progress:
-    percent:float=0.0
-    increment:float=0.0
-    text:str="Idling..."
+    percent: float = 0.0
+    increment: float = 0.0
+    text: str = "Idling..."
+
 
 @dataclass(frozen=True)
 class valid_page:
-    lnk:str
-    filename:str
+    lnk: str
+    filename: str
+
 
 async def sift(_client: Client, PROG_BAR: Progress, code: str) -> valid_page:
     PROG_BAR.text = LANG_DB[SELECTED_LANG][3]
@@ -63,17 +57,12 @@ async def sift(_client: Client, PROG_BAR: Progress, code: str) -> valid_page:
     api_lnk: str = NH_ENUMS.NH_API.value
     img_lnk: str = NH_ENUMS.IMG_URL.value
 
-        # api scraper
+    # api scraper
 
     r0 = await _client.get(api_lnk + code)
     j0 = r0.json()
 
-
-    EXTEND = {
-            "j":".JPG",
-            "p":".PNG",
-            "g":".GIF"
-    } # LOL, IT SPELLS OUT JPG
+    EXTEND = {"j": ".JPG", "p": ".PNG", "g": ".GIF"}  # LOL, IT SPELLS OUT JPG
 
     dj_pages = j0["images"]["pages"]
     try:
@@ -84,18 +73,15 @@ async def sift(_client: Client, PROG_BAR: Progress, code: str) -> valid_page:
 
     TRUE_ID = str(int(j0["media_id"]))
 
-    for no, p in enumerate(dj_pages,start=1):
-        fn: str = "{}{}".format(str(no), EXTEND[p["t"]].lower() )
-        yield valid_page(
-                "{}{}/{}".format(img_lnk,TRUE_ID,fn),
-                fn
-            )
+    for no, p in enumerate(dj_pages, start=1):
+        fn: str = "{}{}".format(str(no), EXTEND[p["t"]].lower())
+        yield valid_page("{}{}/{}".format(img_lnk, TRUE_ID, fn), fn)
 
     # bye bye frontend scraper !
 
 
-async def download(client: Client, link:str, file_dest:str, _folder) -> None:
-    with open(_folder+file_dest,'wb') as dest:
+async def download(client: Client, link: str, file_dest: str, _folder) -> None:
+    with open(_folder + file_dest, "wb") as dest:
         async with client.stream("GET", link) as stream_obj:
             async for chnk in stream_obj.aiter_bytes(chunk_size=4096):
                 dest.write(chnk)
@@ -103,28 +89,24 @@ async def download(client: Client, link:str, file_dest:str, _folder) -> None:
 
 class NHentai(QThread):
     progress_plus_txt_Signal = pyqtSignal(float, str)
-    def __init__(self, code:str, savedir:str):
+
+    def __init__(self, code: str, savedir: str):
 
         super().__init__()
-        self.__code:str = str(code)
-        self.__folder = "{}/{}/".format(
-            str(savedir), self.__code
-        )
+        self.__code: str = str(code)
+        self.__folder = "{}/{}/".format(str(savedir), self.__code)
         self.progressBar = Progress()
         self.client = Client.create_client()
 
     def ptEmit(self) -> None:
         self.progress_plus_txt_Signal.emit(
-            self.progressBar.percent,
-            self.progressBar.text
+            self.progressBar.percent, self.progressBar.text
         )
 
     def detectCloudFlare(self) -> None:
         self.progressBar.text = "CHECKING FOR CLOUDFLARE..."
         self.ptEmit()
-        test = httpx.get(
-            NH_ENUMS.NH_API.value + self.__code
-        ).headers
+        test = httpx.get(NH_ENUMS.NH_API.value + self.__code).headers
         try:
             if test["server"] == "cloudflare":
                 self.progressBar.text = "CLOUDFLARE DETECTED"
@@ -142,10 +124,10 @@ class NHentai(QThread):
         except FileExistsError:
             pass
 
-        #os.chdir(self.__folder)
+        # os.chdir(self.__folder)
 
         ### TEST FOR CLOUDFLARE
-        #self.detectCloudFlare()
+        # self.detectCloudFlare()
 
         ###
 
@@ -181,12 +163,13 @@ class NHentai(QThread):
                 x = await download(self.client, lnk.lnk, lnk.filename, self.__folder)
 
                 self.progressBar.percent += self.progressBar.increment
-                self.progressBar.percent = 100 if (self.progressBar.percent > 100) else (
-                        self.progressBar.percent
-                    )
+                self.progressBar.percent = (
+                    100
+                    if (self.progressBar.percent > 100)
+                    else (self.progressBar.percent)
+                )
 
                 self.ptEmit()
-
 
             self.progressBar.text = LANG_DB[SELECTED_LANG][5]
             self.progressBar.percent = 100

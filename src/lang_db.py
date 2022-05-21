@@ -3,7 +3,7 @@ import configparser
 from nh_enums import NH_ENUMS
 
 # change when building to switch the app to another language
-SELECTED_LANG: str = "en" # DEFAULT to ENGLISH
+SELECTED_LANG: str = "en"  # DEFAULT to ENGLISH
 
 """
 SUPPORTED CURRENTLY:
@@ -13,10 +13,10 @@ SUPPORTED CURRENTLY:
 "jp" - Japanese
 """
 
-LANGS:list = [
-    "en", # english
-    "tr", # turkish
-    "jp", # japanese
+LANGS: list = [
+    "en",  # english
+    "tr",  # turkish
+    "jp",  # japanese
 ]
 
 _conf_fn: str = NH_ENUMS.CONFIG.value
@@ -35,9 +35,8 @@ if os.path.isfile(_conf_fn):
 
 del _conf_fn
 
-LANG_DB:dict = {
-
-    "en":[
+LANG_DB: dict = {
+    "en": [
         "6-Digit Code",
         "Save Directory",
         "Change Directory",
@@ -46,10 +45,9 @@ LANG_DB:dict = {
         "Finished!",
         "Idling...",
         "DL",
-        "ERROR"
+        "ERROR",
     ],
-
-    "tr":[
+    "tr": [
         "6-Digit kod",
         "kayıt dosyası",
         "dosyayı değiştir",
@@ -59,10 +57,9 @@ LANG_DB:dict = {
         "rölanti",
         "DL",
         "Hatta",
-        "Kurmayı başlatın"
+        "Kurmayı başlatın",
     ],
-
-    "jp":[
+    "jp": [
         "コード/六桁コード",
         "SAVE FOLDER",
         "CHANGE FOLDER",
@@ -71,7 +68,6 @@ LANG_DB:dict = {
         "終了",
         "アイドル",
         "DL",
-        "エラー"
+        "エラー",
     ],
-
 }

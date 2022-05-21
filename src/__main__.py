@@ -10,12 +10,9 @@ from PyQt6.QtGui import QIcon
 
 import nhentai
 import startup
-#import cli
-from lang_db import (
-    SELECTED_LANG,
-    LANGS,
-    LANG_DB
-)
+
+# import cli
+from lang_db import SELECTED_LANG, LANGS, LANG_DB
 
 import platform
 from typing import NoReturn
@@ -25,6 +22,7 @@ import configparser
 
 STANDALONE = True
 
+
 class NH(QtWidgets.QWidget, Base_Ui):
     def __init__(self):
         super().__init__()
@@ -33,24 +31,23 @@ class NH(QtWidgets.QWidget, Base_Ui):
 
         self.setWindowTitle("NH")
 
-        if STANDALONE: ico = QIcon("content/nh.png")
+        if STANDALONE:
+            ico = QIcon("content/nh.png")
 
         self.setWindowIcon(ico) if (ico != None) else None
-        del(ico)
+        del ico
 
         # DL BUTTON is exitButton_2
         self.exitButton_2.clicked.connect(self.dl)
-        #self.exitButton.clicked.connect(self.EXIT)
+        # self.exitButton.clicked.connect(self.EXIT)
         self.changeDirectory.clicked.connect(self.changeSaveDir)
 
     def FRAMELESS(self) -> None:
         # for the legacy transparent UI
-        self.setWindowFlags(
-                QtCore.Qt.WindowType(0x00000800)
-        )
+        self.setWindowFlags(QtCore.Qt.WindowType(0x00000800))
         self.setAttribute(
-                QtCore.Qt.WidgetAttribute(0x78) # (int: 120)
-                # QtCore.Qt.WidgetAttribute.WA_TranslucentBackground
+            QtCore.Qt.WidgetAttribute(0x78)  # (int: 120)
+            # QtCore.Qt.WidgetAttribute.WA_TranslucentBackground
         )
 
     def initialize(self) -> None:
@@ -62,15 +59,13 @@ class NH(QtWidgets.QWidget, Base_Ui):
         self.nh_progress_thread = None
 
         self.EXPLORER = Tk()
-        self.EXPLORER.withdraw() # make sure not showing in unnecessary situations
+        self.EXPLORER.withdraw()  # make sure not showing in unnecessary situations
 
-        #self.PLATFORM = sys.platform
+        # self.PLATFORM = sys.platform
         self.PLATFORM = platform.system()
 
         # save directory & persistency
-        if STANDALONE and os.path.isfile(
-            nhentai.NH_ENUMS.CONFIG.value
-        ):
+        if STANDALONE and os.path.isfile(nhentai.NH_ENUMS.CONFIG.value):
             conf = configparser.ConfigParser()
             conf.read(nhentai.NH_ENUMS.CONFIG.value)
             try:
@@ -79,10 +74,12 @@ class NH(QtWidgets.QWidget, Base_Ui):
                 self.saveToDirectory = os.getcwd()
             del conf
         else:
-            self.saveToDirectory = os.getcwd()#.replace("\\","/")
+            self.saveToDirectory = os.getcwd()  # .replace("\\","/")
 
-        self.saveDirectory.setText("..." + self.saveToDirectory[-15:]) if self.saveToDirectory != None else (
-            self.saveDirectory.setPlaceholderText('Select a Directory')
+        self.saveDirectory.setText(
+            "..." + self.saveToDirectory[-15:]
+        ) if self.saveToDirectory != None else (
+            self.saveDirectory.setPlaceholderText("Select a Directory")
         )
 
         return
@@ -114,12 +111,9 @@ class NH(QtWidgets.QWidget, Base_Ui):
     def dl(self) -> None:
         # all numbers are
         # in between 0-9, then run the download
-        sauceCode:str = str( self.sauceBox.text() )
+        sauceCode: str = str(self.sauceBox.text())
 
-        if (
-            NH.isOk(sauceCode) and
-            not self.DOWNLOADING
-        ):
+        if NH.isOk(sauceCode) and not self.DOWNLOADING:
             self.DOWNLOADING = True
 
             print("Instantiating extractor worker thread...")
@@ -130,36 +124,36 @@ class NH(QtWidgets.QWidget, Base_Ui):
             self.nh_instance.finished.connect(self.finishDL)
             self.nh_instance.progress_plus_txt_Signal.connect(self.progress_N_txt)
 
-
-        del(sauceCode)
+        del sauceCode
 
     def finishDL(self) -> None:
         print("Extractor worker thread ended.")
         print("Destroying extractor worker instance...")
-        del(self.nh_instance)
+        del self.nh_instance
         print("Extractor worker instance destroyed")
 
         self.DOWNLOADING = False
 
-    def progress_N_txt(self, x:float, y:str) -> None:
-        self.progressionBar.setValue( int(x) )
-        self.labelStatus.setText( y )
+    def progress_N_txt(self, x: float, y: str) -> None:
+        self.progressionBar.setValue(int(x))
+        self.labelStatus.setText(y)
 
     def changeSaveDir(self) -> None:
         print("Opening file dialog...")
         filePrompt = askdirectory(mustexist=True)
 
-        if filePrompt != '' and filePrompt != None and filePrompt != ():
+        if filePrompt != "" and filePrompt != None and filePrompt != ():
             print("Directory received.")
-            self.saveToDirectory:str = str(filePrompt)
+            self.saveToDirectory: str = str(filePrompt)
             self.saveDirectory.setText("..." + self.saveToDirectory[-15:])
         else:
             print("No directory received.")
 
-        del(filePrompt)
+        del filePrompt
         return
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     # GUI
     if not len(sys.argv) > 1:
         nh_app = QtWidgets.QApplication([])
@@ -172,7 +166,7 @@ if __name__ == '__main__':
         nh_app.exec()
         nh_widget.EXIT()
 
-    #else:
+    # else:
     #    # CLI
     #    nh_cli = cli.NH_CLI(str(sys.argv[1]))
     #    nh_cli.run()

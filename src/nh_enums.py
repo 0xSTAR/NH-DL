@@ -1,8 +1,5 @@
-from enum import (
-    Enum,
-    unique,
-    auto
-)
+from enum import Enum, unique, auto
+
 
 @unique
 class NH_ENUMS(Enum):
