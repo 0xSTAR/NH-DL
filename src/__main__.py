@@ -114,7 +114,7 @@ class NH(QtWidgets.QWidget, Base_Ui):
     def dl(self) -> None:
         # all numbers are
         # in between 0-9, then run the download
-        sauceCode:str = self.sauceBox.text()
+        sauceCode:str = str( self.sauceBox.text() )
 
         if (
             NH.isOk(sauceCode) and
