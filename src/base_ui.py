@@ -4,8 +4,6 @@ from lang_db import SELECTED_LANG, LANGS, LANG_DB
 import random
 from math import floor as flr
 
-# from copy import deepcopy
-
 
 class Ui_Form(object):
     def setupUi(self, Form):

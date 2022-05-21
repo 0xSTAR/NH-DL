@@ -3,7 +3,6 @@ import math
 import httpx
 import asyncio
 import threading
-from bs4 import BeautifulSoup
 from dataclasses import dataclass
 import json
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# GUI / CLI
+# GUI
 
 import sys
 import os
@@ -11,7 +11,6 @@ from PyQt6.QtGui import QIcon
 import nhentai
 import startup
 
-# import cli
 from lang_db import SELECTED_LANG, LANGS, LANG_DB
 
 import platform
@@ -37,9 +36,7 @@ class NH(QtWidgets.QWidget, Base_Ui):
         self.setWindowIcon(ico) if (ico != None) else None
         del ico
 
-        # DL BUTTON is exitButton_2
         self.exitButton_2.clicked.connect(self.dl)
-        # self.exitButton.clicked.connect(self.EXIT)
         self.changeDirectory.clicked.connect(self.changeSaveDir)
 
     def FRAMELESS(self) -> None:
@@ -154,19 +151,12 @@ class NH(QtWidgets.QWidget, Base_Ui):
 
 
 if __name__ == "__main__":
-    # GUI
-    if not len(sys.argv) > 1:
-        nh_app = QtWidgets.QApplication([])
+    nh_app = QtWidgets.QApplication([])
 
-        nh_widget = NH()
+    nh_widget = NH()
 
-        nh_widget.initialize()
-        nh_widget.show()
+    nh_widget.initialize()
+    nh_widget.show()
 
-        nh_app.exec()
-        nh_widget.EXIT()
-
-    # else:
-    #    # CLI
-    #    nh_cli = cli.NH_CLI(str(sys.argv[1]))
-    #    nh_cli.run()
+    nh_app.exec()
+    nh_widget.EXIT()
