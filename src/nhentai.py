@@ -12,6 +12,10 @@ from PyQt6.QtCore import QThread, pyqtSignal
 
 from nh_enums import NH_ENUMS
 
+import LOAD_BREAK
+
+async def WRAP_THE_BREAK(x: str) -> httpx.Cookies:
+    return (await LOAD_BREAK.GET_BREAK_IT(x))
 
 class Client(httpx.AsyncClient):
     def __init__(self, *args, **kwargs):
@@ -19,10 +23,11 @@ class Client(httpx.AsyncClient):
 
     @classmethod
     def create_client(cls) -> object:
+        #PRE_COOKIES: httpx.Cookies = asyncio.run(WRAP_THE_BREAK(LNK_TO_BRK))
         headers = {
             "user-agent": "Mozilla/5.0 (X11; Linux i686; rv:10.0) Gecko/20100101 Firefox/10.0"
         }
-        client = cls(headers=headers)
+        client = cls(headers=headers)#,cookies=PRE_COOKIES)
         return client
 
 
@@ -50,7 +55,7 @@ class valid_page:
     filename: str
 
 
-async def sift(_client: Client, PROG_BAR: Progress, code: str) -> valid_page:
+async def sift(_client: Client, PROG_BAR: Progress, code: str, BROKEN_JSON = None) -> valid_page:
     PROG_BAR.text = LANG_DB[SELECTED_LANG][3]
 
     api_lnk: str = NH_ENUMS.NH_API.value
@@ -58,8 +63,11 @@ async def sift(_client: Client, PROG_BAR: Progress, code: str) -> valid_page:
 
     # api scraper
 
-    r0 = await _client.get(api_lnk + code)
-    j0 = r0.json()
+    if BROKEN_JSON == None:
+        r0 = await _client.get(api_lnk + code)
+        j0 = r0.json()
+    else:
+        j0 = BROKEN_JSON
 
     EXTEND = {"j": ".JPG", "p": ".PNG", "g": ".GIF"}  # LOL, IT SPELLS OUT JPG
 
@@ -95,7 +103,9 @@ class NHentai(QThread):
         self.__code: str = str(code)
         self.__folder = "{}/{}/".format(str(savedir), self.__code)
         self.progressBar = Progress()
-        self.client = Client.create_client()
+
+        
+        #self.client = Client.create_client()
 
     def ptEmit(self) -> None:
         self.progress_plus_txt_Signal.emit(
@@ -118,6 +128,8 @@ class NHentai(QThread):
         self.ptEmit()
 
     def run(self) -> str:
+        self.client = Client.create_client()
+
         try:
             os.mkdir(path=str(self.__folder), mode=511, dir_fd=None)
         except FileExistsError:
@@ -141,22 +153,42 @@ class NHentai(QThread):
 
         CLOUDFLARE_DETECTED: bool = False
 
-        r0 = await self.client.get(NH_ENUMS.NH_API.value + self.__code)
+        r0 = await self.client.get(NH_ENUMS.NH_API.value + self.__code, follow_redirects=True)
+        await asyncio.sleep(10)
         j0 = None
         try:
             j0 = r0.json()
         except json.decoder.JSONDecodeError:
             CLOUDFLARE_DETECTED = not CLOUDFLARE_DETECTED
-            self.progressBar.text = "Error: IUAM Detected"
+            self.progressBar.text = "CloudFlare Detected"
             self.progressBar.percent = 0
+            self.ptEmit()
+            await asyncio.sleep(0.5)
+            # THIS ONE NEEDS TO GET THE GODDAMN SWEETS
 
         del r0
         del j0
 
         ###############
 
-        if not CLOUDFLARE_DETECTED:
-            async for lnk in sift(self.client, self.progressBar, self.__code):
+        FEED_JSON = None
+        BYPASS_WORK = True
+
+        if CLOUDFLARE_DETECTED:
+            self.progressBar.text = "Breaking CloudFlare..."
+            self.ptEmit()
+
+            try:
+                FEED_JSON = await WRAP_THE_BREAK(NH_ENUMS.NH_API.value + self.__code)
+            except:
+                BYPASS_WORK = False
+            #print(FEED_JSON)
+
+        if (BYPASS_WORK == False):
+            self.progressBar.text = "ERR: Bypass Failed"
+
+        if not (BYPASS_WORK == False):
+            async for lnk in sift(self.client, self.progressBar, self.__code,FEED_JSON):
                 self.progressBar.text = LANG_DB[SELECTED_LANG][4]
 
                 x = await download(self.client, lnk.lnk, lnk.filename, self.__folder)
@@ -174,5 +206,10 @@ class NHentai(QThread):
             self.progressBar.percent = 100
 
         self.ptEmit()
+
+        try:
+            os.remove(NH_ENUMS.BREAKER_RES.value)
+        except:
+            pass
 
         await self.client.aclose()

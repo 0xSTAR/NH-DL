@@ -10,3 +10,7 @@ class NH_ENUMS(Enum):
     IMG_URL = "https://i.nhentai.net/galleries/"
 
     CONFIG = "nh.ini"
+
+    BREAKER_RES = "BREAK_IT.json"
+    BREAKER_DOR = "break_it.js"
+    INTERP = "./node_interp/node"
