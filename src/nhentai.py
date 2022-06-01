@@ -154,7 +154,7 @@ class NHentai(QThread):
         CLOUDFLARE_DETECTED: bool = False
 
         r0 = await self.client.get(NH_ENUMS.NH_API.value + self.__code, follow_redirects=True)
-        await asyncio.sleep(10)
+        #await asyncio.sleep(10)
         j0 = None
         try:
             j0 = r0.json()
