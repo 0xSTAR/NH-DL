@@ -2,8 +2,8 @@
 
 Here are some quick links to download the latest release of NH-DL:
 
-[Windows Release](https://github.com/0xSTAR/NH-DL/releases/download/v1.1.2/NH_windows64-MULTILINGUAL.zip)
-[Linux Release](https://github.com/0xSTAR/NH-DL/releases/download/v1.1.2/NH_linux64-MULTILINGUAL.zip)
+-[Windows Release](https://github.com/0xSTAR/NH-DL/releases/download/v1.1.2/NH_windows64-MULTILINGUAL.zip)
+-[Linux Release](https://github.com/0xSTAR/NH-DL/releases/download/v1.1.2/NH_linux64-MULTILINGUAL.zip)
 
 # AUTHOR's NOTE
 
