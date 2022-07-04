@@ -17,6 +17,7 @@ LANGS: list = [
     "en",  # english
     "tr",  # turkish
     "jp",  # japanese
+    "sp", # SPANISH
 ]
 
 _conf_fn: str = NH_ENUMS.CONFIG.value
@@ -70,4 +71,15 @@ LANG_DB: dict = {
         "DL",
         "エラー",
     ],
+    "sp":[
+        "Código de 6 dígitos",
+        "Guardar carpeta",
+        "Cambiar carpeta",
+        "Buscando...", # fetching
+        "Descargando", # downloading
+        "¡Hecho!", #finished
+        "Inactivo", #idling
+        "DL", #DL
+        "ERROR" # ERROR
+    ]
 }

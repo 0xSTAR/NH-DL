@@ -1,7 +1,10 @@
 {
   "dependencies": {
-    "puppeteer": "^14.1.1",
-    "puppeteer-extra": "^3.2.3",
-    "puppeteer-extra-plugin-stealth": "^2.9.0"
+    "puppeteer": "^15.3.0",
+    "puppeteer-extra": "^3.3.0",
+    "puppeteer-extra-plugin-adblocker": "^2.13.0",
+    "puppeteer-extra-plugin-anonymize-ua": "^2.4.0",
+    "puppeteer-extra-plugin-minmax": "^1.1.2",
+    "puppeteer-extra-plugin-stealth": "^2.10.1"
   }
 }

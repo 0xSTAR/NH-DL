@@ -104,7 +104,7 @@ class NHentai(QThread):
         self.__folder = "{}/{}/".format(str(savedir), self.__code)
         self.progressBar = Progress()
 
-        
+
         #self.client = Client.create_client()
 
     def ptEmit(self) -> None:
@@ -153,7 +153,7 @@ class NHentai(QThread):
 
         CLOUDFLARE_DETECTED: bool = False
 
-        r0 = await self.client.get(NH_ENUMS.NH_API.value + self.__code, follow_redirects=True)
+        r0 = await self.client.get(NH_ENUMS.NH_API.value + self.__code)#, follow_redirects=True)
         #await asyncio.sleep(10)
         j0 = None
         try:

@@ -1,5 +1,5 @@
-version: list = [1, 1, 1]
-release_type: str = "dev"
+version: list = [1, 1, 2]
+release_type: str = "release"
 
 print(
     "\nnh-dl v{}.{}.{}-{}\n-------------------\n".format(
